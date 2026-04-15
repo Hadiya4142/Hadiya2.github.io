@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shadows of Power - History Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #12070d;
+      --bg-2: #1d0b15;
+      --card: #271222;
+      --line: #4a2338;
+      --text: #f9eff6;
+      --muted: #c9afbf;
+      --primary: #ff6a93;
+      --primary-dim: #c54c70;
+      --ok: #89e894;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, #2b0e1e, transparent 40%),
+        radial-gradient(circle at 80% 10%, #3b1426, transparent 30%),
+        linear-gradient(145deg, var(--bg), var(--bg-2));
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .screen {
+      display: none;
+      width: min(940px, 100%);
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .panel {
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      background: rgba(20, 8, 14, 0.8);
+      backdrop-filter: blur(2px);
+      padding: 28px;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.03), 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .startup-panel {
+      animation: panelPop 550ms ease;
+    }
+
+    @keyframes panelPop {
+      from {
+        transform: translateY(10px) scale(0.98);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    h1,
+    h2 {
+      font-family: "Press Start 2P", monospace;
+      margin: 0 0 16px;
+      line-height: 1.5;
+      letter-spacing: 1px;
+    }
+
+    .blink {
+      font-family: "Press Start 2P", monospace;
+      font-size: 0.65rem;
+      color: #ffd4e1;
+      margin-bottom: 14px;
+      animation: blink 1.05s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      to {
+        visibility: hidden;
+      }
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0;
+    }
+
+    .sub {
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .btn {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(180deg, var(--primary), var(--primary-dim));
+    }
+
+    .btn-secondary {
+      background: #2b1724;
+      color: var(--text);
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .character-card {
+      border: 2px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: left;
+      display: grid;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease;
+    }
+
+    .character-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .sprite {
+      width: 56px;
+      height: 56px;
+      image-rendering: pixelated;
+      border: 2px solid #5b2c46;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px #180b12;
+    }
+
+    .sprite-stalin {
+      background:
+        linear-gradient(#d6c3a0 0 0) 20px 11px / 16px 13px no-repeat,
+        linear-gradient(#3f3430 0 0) 16px 25px / 24px 5px no-repeat,
+        linear-gradient(#6b6f74 0 0) 14px 30px / 28px 17px no-repeat,
+        linear-gradient(#4b1f2a 0 0) 0 0 / 100% 100% no-repeat;
+    }
+
+    .sprite-citizen {
+      background:
+        linear-gradient(#ead8b1 0 0) 20px 11px / 16px 13px no-repeat,
+        linear-gradient(#9f7348 0 0) 16px 24px / 24px 5px no-repeat,
+        linear-gradient(#8d6a3f 0 0) 15px 30px / 26px 17px no-repeat,
+        linear-gradient(#36212a 0 0) 0 0 / 100% 100% no-repeat;
+    }
+
+    .name {
+      font-weight: 700;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .hud {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    #chapter-tag {
+      font-family: "Press Start 2P", monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .meters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .meters span {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .bar {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      height: 12px;
+      overflow: hidden;
+      background: #1f0f19;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--primary), #ffbece);
+    }
+
+    .game-panel h2 {
+      margin-bottom: 8px;
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .choice-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #21101c;
+      color: var(--text);
+      text-align: left;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      border-color: #a95172;
+    }
+
+    .choice-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .result-text {
+      min-height: 28px;
+      margin: 16px 0 8px;
+      color: var(--ok);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    .map-node {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px;
+      background: #1f0e18;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .map-node small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    .map-node.current {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(255, 106, 147, 0.15);
+    }
+
+    .map-node.done {
+      border-color: #4f9f67;
+    }
+
+    .map-node.locked {
+      opacity: 0.5;
+    }
+
+    @media (max-width: 650px) {
+      .meters {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="startup-screen" class="screen active">
+      <div class="panel startup-panel">
+        <p class="eyebrow">Global History Interactive Project</p>
+        <h1>SHADOWS OF POWER</h1>
+        <p class="blink">PRESS PLAY TO BEGIN</p>
+        <p class="sub">
+          Experience Soviet history through two perspectives:
+          the ruler and the people affected by his policies.
+        </p>
+        <div class="row">
+          <button id="startup-play-btn" class="btn btn-primary">PLAY</button>
+          <button id="audio-toggle-btn" class="btn btn-secondary">SOUND: ON</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="character-screen" class="screen">
+      <div class="panel">
+        <h2>SELECT CHARACTER</h2>
+        <div class="character-grid">
+          <button class="character-card" data-role="stalin" type="button">
+            <span class="sprite sprite-stalin" aria-hidden="true"></span>
+            <span class="name">Joseph Stalin</span>
+            <span class="caption">Rise, rule, and consequences</span>
+          </button>
+          <button class="character-card" data-role="citizen" type="button">
+            <span class="sprite sprite-citizen" aria-hidden="true"></span>
+            <span class="name">Soviet Citizen</span>
+            <span class="caption">Survive policy, fear, and change</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="map-screen" class="screen">
+      <div class="panel">
+        <h2>CHAPTER MAP</h2>
+        <p class="sub">Choose your chapter path. Chapters unlock in order as you progress.</p>
+        <div id="chapter-map" class="map-grid"></div>
+        <div class="row">
+          <button id="map-start-btn" class="btn btn-primary">START CHAPTER</button>
+          <button id="map-back-btn" class="btn btn-secondary">BACK</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen">
+      <div class="hud">
+        <div id="chapter-tag">Chapter 1</div>
+        <div class="meters">
+          <div><span>Risk</span><div class="bar"><i id="risk-bar"></i></div></div>
+          <div><span>Stability</span><div class="bar"><i id="stability-bar"></i></div></div>
+          <div><span>Legacy</span><div class="bar"><i id="legacy-bar"></i></div></div>
+        </div>
+      </div>
+
+      <div class="panel game-panel">
+        <h2 id="event-title">Event Title</h2>
+        <p id="event-text">Event text goes here.</p>
+        <div id="choice-list" class="choice-list"></div>
+        <p id="result-text" class="result-text"></p>
+        <div class="row">
+          <button id="map-btn" class="btn btn-secondary">MAP</button>
+          <button id="next-btn" class="btn btn-primary" disabled>NEXT</button>
+          <button id="restart-btn" class="btn btn-secondary">RESTART</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="end-screen" class="screen">
+      <div class="panel">
+        <h2>CAMPAIGN COMPLETE</h2>
+        <p id="end-summary"></p>
+        <button id="play-again-btn" class="btn btn-primary">PLAY AGAIN</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const screens = {
+      startup: document.getElementById("startup-screen"),
+      character: document.getElementById("character-screen"),
+      map: document.getElementById("map-screen"),
+      game: document.getElementById("game-screen"),
+      end: document.getElementById("end-screen")
+    };
+
+    const ui = {
+      chapterTag: document.getElementById("chapter-tag"),
+      eventTitle: document.getElementById("event-title"),
+      eventText: document.getElementById("event-text"),
+      choiceList: document.getElementById("choice-list"),
+      resultText: document.getElementById("result-text"),
+      nextBtn: document.getElementById("next-btn"),
+      mapBtn: document.getElementById("map-btn"),
+      mapBackBtn: document.getElementById("map-back-btn"),
+      mapStartBtn: document.getElementById("map-start-btn"),
+      chapterMap: document.getElementById("chapter-map"),
+      restartBtn: document.getElementById("restart-btn"),
+      playAgainBtn: document.getElementById("play-again-btn"),
+      audioToggleBtn: document.getElementById("audio-toggle-btn"),
+      endSummary: document.getElementById("end-summary"),
+      riskBar: document.getElementById("risk-bar"),
+      stabilityBar: document.getElementById("stability-bar"),
+      legacyBar: document.getElementById("legacy-bar")
+    };
+
+    const campaigns = {
+      stalin: [
+        {
+          chapter: "Childhood in Gori (1890s)",
+          title: "A Harsh Beginning",
+          text: "You are Ioseb (later Joseph Stalin), growing up in poverty and violence. Education and identity are contested.",
+          choices: [
+            {
+              text: "Focus on church schooling.",
+              result: "You gain discipline and literacy that help your political rise.",
+              effects: { risk: -5, stability: 5, legacy: 4 }
+            },
+            {
+              text: "Join underground revolutionary circles earlier.",
+              result: "You build radical networks but draw police attention quickly.",
+              effects: { risk: 12, stability: -4, legacy: 6 }
+            }
+          ]
+        },
+        {
+          chapter: "Power Struggle After Lenin (1924-1928)",
+          title: "Consolidating Control",
+          text: "Lenin has died. Rival factions compete. You choose coalition tactics, rhetoric, and appointment strategy.",
+          choices: [
+            {
+              text: "Use party appointments to control institutions.",
+              result: "Your internal power grows steadily while opposition weakens.",
+              effects: { risk: 7, stability: 12, legacy: 10 }
+            },
+            {
+              text: "Pursue open confrontation immediately.",
+              result: "You move faster but raise instability and resistance.",
+              effects: { risk: 14, stability: -8, legacy: 8 }
+            }
+          ]
+        },
+        {
+          chapter: "Collectivization and Famine (1930s)",
+          title: "Forced Transformation",
+          text: "Rapid collectivization is imposed. Peasants resist, food systems collapse in multiple regions, and state violence increases.",
+          choices: [
+            {
+              text: "Reduce quotas after local failures are reported.",
+              result: "Some suffering is lowered, but production targets are missed.",
+              effects: { risk: -8, stability: -5, legacy: -6 }
+            },
+            {
+              text: "Maintain severe quotas and punish resistance.",
+              result: "Control remains but human cost rises dramatically.",
+              effects: { risk: 18, stability: 4, legacy: -18 }
+            }
+          ]
+        },
+        {
+          chapter: "Great Purge (1936-1938)",
+          title: "Rule by Fear",
+          text: "The NKVD expands arrests, show trials, and executions. Elite and ordinary citizens are targeted.",
+          choices: [
+            {
+              text: "Scale back purges after evidence of abuse.",
+              result: "Institutional fear drops but your absolute control weakens.",
+              effects: { risk: -10, stability: -6, legacy: 3 }
+            },
+            {
+              text: "Expand purges to remove all perceived threats.",
+              result: "Opposition disappears while fear and injustice deepen.",
+              effects: { risk: 20, stability: 5, legacy: -20 }
+            }
+          ]
+        }
+      ],
+      citizen: [
+        {
+          chapter: "Village Under Collectivization (1930)",
+          title: "Land and Grain Seizure",
+          text: "Officials demand grain quotas from your village. Families must choose between compliance, concealment, or fleeing.",
+          choices: [
+            {
+              text: "Surrender grain to meet quota demands.",
+              result: "Immediate punishment risk is lower, but hunger increases.",
+              effects: { risk: -5, stability: -7, legacy: 1 }
+            },
+            {
+              text: "Hide grain to feed your family.",
+              result: "You might survive the winter, but discovery is dangerous.",
+              effects: { risk: 15, stability: 3, legacy: 2 }
+            }
+          ]
+        },
+        {
+          chapter: "Famine Survival (1932-1933)",
+          title: "No Easy Choice",
+          text: "Food shortages intensify across regions. Movement is restricted; state suspicion rises.",
+          choices: [
+            {
+              text: "Travel secretly toward a city for food.",
+              result: "You find limited aid but face detention checkpoints.",
+              effects: { risk: 12, stability: 4, legacy: 0 }
+            },
+            {
+              text: "Stay and depend on local networks.",
+              result: "Community ties help some people, but supplies remain scarce.",
+              effects: { risk: 5, stability: -3, legacy: 2 }
+            }
+          ]
+        },
+        {
+          chapter: "Purge Era (1937)",
+          title: "Fear and Denunciations",
+          text: "Arrests spread through workplaces and neighborhoods. Silence, loyalty, and trust all become survival decisions.",
+          choices: [
+            {
+              text: "Keep quiet and avoid political discussion.",
+              result: "You reduce visibility, though random accusation remains possible.",
+              effects: { risk: -4, stability: 2, legacy: 1 }
+            },
+            {
+              text: "Defend an accused friend publicly.",
+              result: "You keep your integrity but increase personal danger.",
+              effects: { risk: 18, stability: -2, legacy: 8 }
+            }
+          ]
+        },
+        {
+          chapter: "Possible Emigration Route",
+          title: "Attempt Escape?",
+          text: "A risky chance appears through contacts near a border corridor. Historically, successful exits are rare and dangerous.",
+          choices: [
+            {
+              text: "Attempt to emigrate.",
+              result: "If your papers and timing align, your family may survive abroad.",
+              effects: { risk: 10, stability: 10, legacy: 6 }
+            },
+            {
+              text: "Remain and rebuild life locally.",
+              result: "You avoid border risk but continue under heavy state control.",
+              effects: { risk: 3, stability: -1, legacy: 1 }
+            }
+          ]
+        }
+      ]
+    };
+
+    const state = {
+      role: null,
+      index: 0,
+      selectedMapIndex: 0,
+      risk: 35,
+      stability: 55,
+      legacy: 50,
+      audioOn: true
+    };
+
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+    }
+
+    function playTone(freq = 240, duration = 0.07, type = "square", gainValue = 0.02) {
+      if (!state.audioOn || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = gainValue;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playUiClick() {
+      playTone(300, 0.06, "square", 0.025);
+    }
+
+    function playSuccessTone() {
+      playTone(360, 0.07, "triangle", 0.03);
+      setTimeout(() => playTone(480, 0.09, "triangle", 0.03), 70);
+    }
+
+    function showScreen(name) {
+      Object.values(screens).forEach((el) => el.classList.remove("active"));
+      screens[name].classList.add("active");
+    }
+
+    function clamp(n) {
+      return Math.max(0, Math.min(100, n));
+    }
+
+    function updateBars() {
+      ui.riskBar.style.width = `${state.risk}%`;
+      ui.stabilityBar.style.width = `${state.stability}%`;
+      ui.legacyBar.style.width = `${state.legacy}%`;
+    }
+
+    function applyEffects(effects) {
+      state.risk = clamp(state.risk + effects.risk);
+      state.stability = clamp(state.stability + effects.stability);
+      state.legacy = clamp(state.legacy + effects.legacy);
+      updateBars();
+    }
+
+    function renderEvent() {
+      const event = campaigns[state.role][state.index];
+      if (!event) {
+        finishCampaign();
+        return;
+      }
+
+      ui.chapterTag.textContent = event.chapter;
+      ui.eventTitle.textContent = event.title;
+      ui.eventText.textContent = event.text;
+      ui.resultText.textContent = "";
+      ui.choiceList.innerHTML = "";
+      ui.nextBtn.disabled = true;
+
+      event.choices.forEach((choice) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.type = "button";
+        btn.textContent = choice.text;
+
+        btn.addEventListener("click", () => {
+          [...ui.choiceList.children].forEach((child) => {
+            child.disabled = true;
+          });
+          applyEffects(choice.effects);
+          ui.resultText.textContent = choice.result;
+          ui.nextBtn.disabled = false;
+        });
+
+        ui.choiceList.appendChild(btn);
+      });
+    }
+
+    function renderMap() {
+      const route = campaigns[state.role] || [];
+      ui.chapterMap.innerHTML = "";
+
+      route.forEach((event, idx) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "map-node";
+
+        if (idx < state.index) {
+          card.classList.add("done");
+        } else if (idx === state.index) {
+          card.classList.add("current");
+        } else {
+          card.classList.add("locked");
+          card.disabled = true;
+        }
+
+        card.innerHTML = `<strong>Chapter ${idx + 1}</strong><small>${event.title}</small>`;
+
+        if (idx <= state.index) {
+          card.addEventListener("click", () => {
+            state.selectedMapIndex = idx;
+            [...ui.chapterMap.children].forEach((n) => n.classList.remove("current"));
+            card.classList.add("current");
+            playUiClick();
+          });
+        }
+
+        ui.chapterMap.appendChild(card);
+      });
+
+      if (state.selectedMapIndex > state.index) {
+        state.selectedMapIndex = state.index;
+      }
+    }
+
+    function finishCampaign() {
+      showScreen("end");
+      const route = state.role === "stalin" ? "Stalin Campaign" : "Citizen Campaign";
+      ui.endSummary.textContent =
+        `${route} complete. Final metrics -> Risk: ${state.risk}, Stability: ${state.stability}, Legacy: ${state.legacy}. ` +
+        "Add more chapters and source-backed event cards to expand historical depth.";
+    }
+
+    function startCampaign(role) {
+      playUiClick();
+      state.role = role;
+      state.index = 0;
+      state.selectedMapIndex = 0;
+      state.risk = 35;
+      state.stability = 55;
+      state.legacy = 50;
+      updateBars();
+      showScreen("map");
+      renderMap();
+    }
+
+    function resetToMenu() {
+      playUiClick();
+      showScreen("character");
+    }
+
+    document.getElementById("startup-play-btn").addEventListener("click", () => {
+      initAudio();
+      playUiClick();
+      showScreen("character");
+    });
+
+    document.querySelectorAll(".character-card").forEach((btn) => {
+      btn.addEventListener("click", () => startCampaign(btn.dataset.role));
+    });
+
+    ui.nextBtn.addEventListener("click", () => {
+      playUiClick();
+      state.index += 1;
+      renderEvent();
+    });
+
+    ui.mapBtn.addEventListener("click", () => {
+      playUiClick();
+      showScreen("map");
+      renderMap();
+    });
+
+    ui.mapBackBtn.addEventListener("click", () => {
+      playUiClick();
+      showScreen("character");
+    });
+
+    ui.mapStartBtn.addEventListener("click", () => {
+      playUiClick();
+      state.index = state.selectedMapIndex;
+      showScreen("game");
+      renderEvent();
+    });
+
+    ui.audioToggleBtn.addEventListener("click", () => {
+      initAudio();
+      state.audioOn = !state.audioOn;
+      ui.audioToggleBtn.textContent = `SOUND: ${state.audioOn ? "ON" : "OFF"}`;
+      playUiClick();
+    });
+
+    ui.restartBtn.addEventListener("click", resetToMenu);
+
+    ui.playAgainBtn.addEventListener("click", () => {
+      playSuccessTone();
+      showScreen("character");
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.classList.contains("choice-btn")) {
+        playSuccessTone();
+      }
+    });
+  </script>
+</body>
+</html>

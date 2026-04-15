@@ -1,0 +1,12 @@
+Add Freeplay Mode to Shadows of Power
+
+- Built FreeplayGame.tsx: full canvas-based action game with 5-wave system
+- Stalin Shooter mode: WASD movement, mouse aim/shoot, coin drops, 5 gun upgrade tiers
+- Civilian Survival mode: dodge bullets, collect food, click dead bodies for HP, timed waves
+- Added NPC friendly fire so civilian bodies can actually spawn
+- Integrated mode select screen (Story Mode vs Freeplay Mode) into App.tsx
+- Added freeplay character select screen with Stalin/Civilian cards
+- Updated PLAY flow: startup → modeSelect → character/freeplay
+- Added BACK buttons on all new screens for navigation
+- Fixed mouse state bug: mouseup listener on window instead of canvas only
+- Updated replit.md with freeplay documentation
